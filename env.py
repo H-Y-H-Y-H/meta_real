@@ -163,9 +163,12 @@ class meta_sm_Env(gym.Env):
         step_obs_list = []
         r = 0
         # range 1 to step_num +1 so that the robot can achieve the original pos after current action.
-        for a_i in range(1, self.sub_step_num + 1):
-            a_i_add = sin_move(a_i, sin_para)
-            norm_a = self.initial_moving_joints_angle + a_i_add
+        for a_i in range(self.sub_step_num):
+            if a_i == self.sub_step_num-1:
+                norm_a = self.initial_moving_joints_angle
+            else:
+                a_i_add = sin_move(a_i, sin_para)
+                norm_a = self.initial_moving_joints_angle + a_i_add
             norm_a = np.clip(norm_a, -1, 1)
             a = norm_a * self.motor_action_space
             self.act(a)
@@ -213,6 +216,7 @@ URDF_PTH = data_root + "robot_urdf_210k/"
 
 if __name__ == "__main__":
 
+
     # Data collection
     mode = 0
 
@@ -244,7 +248,8 @@ if __name__ == "__main__":
             meta_env = meta_sm_Env(initial_joints_angle,
                                    urdf_path='V000_urdf/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6.urdf')
             max_train_step = 100
-            meta_env.sleep_time = 1/240
+            meta_env.sleep_time = 0
+
             obs = meta_env.reset()
             step_times = 0
             r_record = -np.inf
@@ -255,16 +260,17 @@ if __name__ == "__main__":
             num_population = 5
             loop_action = np.copy(initial_para)
             mu = 0.8
+            action_para_logger = []
             while 1:
                 # tunning 80%
                 loop_action_array = np.repeat([loop_action], int(num_population * mu), axis=0)
                 # keep one of previous best one
-                loop_action_array[:-1] = np.random.normal(loop_action_array[:-1], scale=0.1)
+                loop_action_array[1:] = np.random.normal(loop_action_array[1:], scale=0.1)
                 # random_new 20%
                 norm_space = np.random.sample((int(num_population - mu * num_population), len(initial_para)))
+                num_new_random_para = int(num_population - mu * num_population)
                 action_list_append = norm_space * (para_range[:, 1] - para_range[:, 0]) + np.repeat(
-                    [para_range[:, 0]],
-                    int(num_population - mu * num_population), axis=0)
+                    [para_range[:, 0]], num_new_random_para, axis=0)
                 # All individuals actions
                 action_list = np.vstack((loop_action_array, action_list_append))
                 rewards = []
@@ -286,8 +292,11 @@ if __name__ == "__main__":
                         r_record = np.copy(r)
                         save_action = np.copy(action)
 
-                best_id = np.argmax(rewards)
-                loop_action = action_list[best_id]
+                    action_para_logger.append(action)
+
+                if done_time ==0:
+                    best_id = np.argmax(rewards)
+                    loop_action = action_list[best_id]
                 # pos, ori = meta_env.robot_location()
 
                 if step_times >= max_train_step:
@@ -300,6 +309,7 @@ if __name__ == "__main__":
                 ANS_data = np.asarray(ANS_data)
                 print(ANS_data.shape)
                 np.save(log_pth + "sans_%d_%d_V2.npy" % (max_train_step, add_sans),ANS_data)
+                np.savetxt(log_pth + "action_para_list.csv",np.asarray(action_para_logger))
 
         else:
             meta_env = meta_sm_Env(initial_joints_angle,

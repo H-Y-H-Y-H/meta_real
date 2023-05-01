@@ -24,9 +24,9 @@ def get_state_data(cam_data):
     y = cam_data.rotation.x
     z = -cam_data.rotation.y
 
-    pitch =  -m.asin(2.0 * (x*z - w*y)) * 180.0 / m.pi;
-    roll  =  m.atan2(2.0 * (w*x + y*z), w*w - x*x - y*y + z*z) * 180.0 / m.pi;
-    yaw   =  m.atan2(2.0 * (w*z + x*y), w*w + x*x - y*y - z*z) * 180.0 / m.pi;
+    pitch =  -m.asin(2.0 * (x*z - w*y)) * 180.0 / m.pi
+    roll  =  m.atan2(2.0 * (w*x + y*z), w*w - x*x - y*y + z*z) * 180.0 / m.pi
+    yaw   =  m.atan2(2.0 * (w*z + x*y), w*w + x*x - y*y - z*z) * 180.0 / m.pi
     # yaw: right +
     # roll: right +
     # pitch: upper + 
@@ -58,7 +58,7 @@ def read_pos():
     return pos
 
 if __name__ == '__main__':
-
+    time_step = 0.11623673115395303
     para_config = np.loadtxt('para_config.csv')
     log_path = 'log/'
     os.makedirs(log_path,exist_ok = True)
@@ -74,27 +74,43 @@ if __name__ == '__main__':
     time.sleep(1)
     init_pos = read_pos()
 
+    POLICY = 1
+    action_para_list = np.loadtxt('data/robot_sign_data_2/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6/action_para_list.csv')
 
     step_num = 2
     query_state_after_N_step = 1
     log_pos = []
     log_action = []
     log_state = []
+
+
     try:
         for step_i in range(step_num):
-            norm_space = np.random.sample(len(initial_para))
-            a_para = norm_space * (para_range[:,1]-para_range[:,0]) + para_range[:,0]
+
+            if POLICY == 0:
+                norm_space = np.random.sample(len(initial_para))
+                a_para = norm_space * (para_range[:, 1] - para_range[:, 0]) + para_range[:, 0]
+            elif POLICY == 1:
+                a_para = action_para_list[step_i]
+            else:
+                a_para = None
+                quit()
+
             time0 = time.time()
-            for ti in range(1,17):
-                a_add = sin_move(ti, a_para)
-                a = initial_moving_joints_angle + a_add
+            for ti in range(16):
+                if ti == 15:
+                    a = initial_moving_joints_angle
+                else:
+                    a_add = sin_move(ti, a_para)
+                    a = initial_moving_joints_angle + a_add
+
                 a = np.clip(a, -1, 1)
                 act_cmds(a)
 
                 # time
 
                 time1 = time.time()
-                time.sleep(0.125-(time1-time0))
+                time.sleep(time_step-(time1-time0))
                 print('time_used',time1-time0)
                 time0 = time.time()
 
