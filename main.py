@@ -71,13 +71,13 @@ if __name__ == '__main__':
     # cmds[1],cmds[4],cmds[7],cmds[10] = [-1]*4
     # cmds[2],cmds[5],cmds[8],cmds[11] = [-1]*4
     act_cmds(initial_moving_joints_angle)
-    time.sleep(1)
+    time.sleep(2)
     init_pos = read_pos()
 
     POLICY = 1
     action_para_list = np.loadtxt('data/robot_sign_data_2/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6/action_para_list.csv')
 
-    step_num = 2
+    step_num = 10
     query_state_after_N_step = 1
     log_pos = []
     log_action = []
@@ -98,11 +98,11 @@ if __name__ == '__main__':
 
             time0 = time.time()
             for ti in range(16):
-                if ti == 15:
-                    a = initial_moving_joints_angle
-                else:
-                    a_add = sin_move(ti, a_para)
-                    a = initial_moving_joints_angle + a_add
+                # if ti == 15:
+                #     a = initial_moving_joints_angle
+                # else:
+                a_add = sin_move(ti, a_para)
+                a = initial_moving_joints_angle + a_add
 
                 a = np.clip(a, -1, 1)
                 act_cmds(a)
