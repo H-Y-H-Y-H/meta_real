@@ -97,7 +97,7 @@ if __name__ == '__main__':
                 quit()
 
             time0 = time.time()
-            for ti in range(16):
+            for ti in range(1,17):
                 # if ti == 15:
                 #     a = initial_moving_joints_angle
                 # else:
@@ -128,7 +128,7 @@ if __name__ == '__main__':
         pipe.stop()
         
     np.savetxt(log_path+'joint_pos.csv',np.asarray(log_pos))
-    np.savetxt(log_path+'a.csv',np.asarray(a))
+    np.savetxt(log_path+'a.csv',np.asarray(log_action))
     np.savetxt(log_path+'state.csv',np.asarray(log_state))
 
 
