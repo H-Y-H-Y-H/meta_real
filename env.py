@@ -11,6 +11,7 @@ random.seed(2023)
 np.random.seed(2023)
 torch.manual_seed(2023)
 
+
 class meta_sm_Env(gym.Env):
     def __init__(self, init_q, robot_camera=False, urdf_path='CAD2URDF'):
 
@@ -162,13 +163,11 @@ class meta_sm_Env(gym.Env):
         step_action_list = []
         step_obs_list = []
         r = 0
+        step_done = False
         # range 1 to step_num +1 so that the robot can achieve the original pos after current action.
-        for a_i in range(self.sub_step_num):
-            if a_i == self.sub_step_num-1:
-                norm_a = self.initial_moving_joints_angle
-            else:
-                a_i_add = sin_move(a_i, sin_para)
-                norm_a = self.initial_moving_joints_angle + a_i_add
+        for a_i in range(1,self.sub_step_num+1):
+            a_i_add = sin_move(a_i, sin_para)
+            norm_a = self.initial_moving_joints_angle + a_i_add
             norm_a = np.clip(norm_a, -1, 1)
             a = norm_a * self.motor_action_space
             self.act(a)
@@ -176,7 +175,9 @@ class meta_sm_Env(gym.Env):
             step_obs_list.append(step_obs)
             step_action_list.append(norm_a)  # from -1 to 1
             r += (3 * step_obs[1] - abs(step_obs[5]) - 0.5 * abs(step_obs[0]) + 1)
-        step_done = self.check()
+            step_done = self.check()
+            if step_done:
+                break
 
         self.count += 1
         obs_combine = np.hstack((step_action_list, step_obs_list))
@@ -216,7 +217,6 @@ URDF_PTH = data_root + "robot_urdf_210k/"
 
 if __name__ == "__main__":
 
-
     # Data collection
     mode = 0
 
@@ -235,7 +235,6 @@ if __name__ == "__main__":
         para_range = para_config[:, 1:]
 
         robot_name = '10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6'
-
         log_pth = "data/robot_sign_data_2/%s/" % robot_name
         os.makedirs(log_pth, exist_ok=True)
 
@@ -243,13 +242,11 @@ if __name__ == "__main__":
         initial_joints_angle = initial_joints_angle[0] if len(
             initial_joints_angle.shape) == 2 else initial_joints_angle
 
-
         if Train:
             meta_env = meta_sm_Env(initial_joints_angle,
                                    urdf_path='V000_urdf/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6.urdf')
-            max_train_step = 100
+            max_train_step = 10
             meta_env.sleep_time = 0
-
             obs = meta_env.reset()
             step_times = 0
             r_record = -np.inf
@@ -257,7 +254,7 @@ if __name__ == "__main__":
             save_action = []
             done_time = 0
             done_time_killer = 1
-            num_population = 5
+            num_population = 10
             loop_action = np.copy(initial_para)
             mu = 0.8
             action_para_logger = []
@@ -269,8 +266,9 @@ if __name__ == "__main__":
                 # random_new 20%
                 norm_space = np.random.sample((int(num_population - mu * num_population), len(initial_para)))
                 num_new_random_para = int(num_population - mu * num_population)
-                action_list_append = norm_space * (para_range[:, 1] - para_range[:, 0]) + np.repeat(
-                    [para_range[:, 0]], num_new_random_para, axis=0)
+                action_list_append = norm_space * (para_range[:, 1] - para_range[:, 0]) + np.repeat([para_range[:, 0]],
+                                                                                                    num_new_random_para,
+                                                                                                    axis=0)
                 # All individuals actions
                 action_list = np.vstack((loop_action_array, action_list_append))
                 rewards = []
@@ -294,7 +292,7 @@ if __name__ == "__main__":
 
                     action_para_logger.append(action)
 
-                if done_time ==0:
+                if done_time == 0:
                     best_id = np.argmax(rewards)
                     loop_action = action_list[best_id]
                 # pos, ori = meta_env.robot_location()
@@ -308,8 +306,8 @@ if __name__ == "__main__":
                 np.savetxt(log_pth + "gait_step%d_%d.csv" % (max_train_step, add_sans), np.asarray(save_action))
                 ANS_data = np.asarray(ANS_data)
                 print(ANS_data.shape)
-                np.save(log_pth + "sans_%d_%d_V2.npy" % (max_train_step, add_sans),ANS_data)
-                np.savetxt(log_pth + "action_para_list.csv",np.asarray(action_para_logger))
+                np.save(log_pth + "sans_%d_%d_V2.npy" % (max_train_step, add_sans), ANS_data)
+                np.savetxt(log_pth + "action_para_list.csv", np.asarray(action_para_logger))
 
         else:
             meta_env = meta_sm_Env(initial_joints_angle,

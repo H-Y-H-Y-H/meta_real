@@ -33,8 +33,8 @@ def get_state_data(cam_data):
     return [cam_data.translation.x,cam_data.translation.z,cam_data.translation.y, roll, pitch, yaw]
 
 
-def norm_act(cmds):
-    cmds = np.asarray(cmds)
+def norm_act(cmds_):
+    cmds = np.asarray(cmds_)
     assert ( cmds <= 1. ).all() and ( cmds >= -1. ).all(),'ERROR: cmds wrong, should between -1 and 1'
 
 
@@ -46,8 +46,8 @@ def norm_act(cmds):
     return cmds.astype(int)
 
 
-def act_cmds(cmds):
-    cmds = norm_act(cmds)
+def act_cmds(cmds_):
+    cmds = norm_act(cmds_)
     for i in range(12):
         lx16_control.moveServo(i+10,cmds[i],rate=150)
 
@@ -60,8 +60,8 @@ def read_pos():
 if __name__ == '__main__':
     time_step = 0.11623673115395303
     para_config = np.loadtxt('para_config.csv')
-    log_path = 'log/'
-    os.makedirs(log_path,exist_ok = True)
+    log_path = 'log/log_0'
+    os.makedirs(log_path, exist_ok = True)
 
 
     initial_para = para_config[:,0]
@@ -97,10 +97,7 @@ if __name__ == '__main__':
                 quit()
 
             time0 = time.time()
-            for ti in range(1,17):
-                # if ti == 15:
-                #     a = initial_moving_joints_angle
-                # else:
+            for ti in range(16):
                 a_add = sin_move(ti, a_para)
                 a = initial_moving_joints_angle + a_add
 
