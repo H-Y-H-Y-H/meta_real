@@ -28,7 +28,7 @@ class meta_sm_Env(gym.Env):
         self.sleep_time = 0  # decrease the value if it is too slow.
 
         self.maxVelocity = 1.5  # lx-224 0.20 sec/60degree = 5.236 rad/s
-        self.force = 1.8
+        self.force = 2.5
 
         # self.max_velocity = 1.8
         # self.force = 1.6
