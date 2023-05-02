@@ -49,7 +49,7 @@ def norm_act(cmds_):
 def act_cmds(cmds_):
     cmds = norm_act(cmds_)
     for i in range(12):
-        lx16_control.moveServo(i+10,cmds[i],rate=150)
+        lx16_control.moveServo(i+10,cmds[i],rate=200)
 
 def read_pos():
     pos = []
