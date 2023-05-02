@@ -37,8 +37,7 @@ def norm_act(cmds_):
     cmds = np.asarray(cmds_)
     assert ( cmds <= 1. ).all() and ( cmds >= -1. ).all(),'ERROR: cmds wrong, should between -1 and 1'
 
-
-    # cmds[7:9],cmds[10:13] = -cmds[7:9], -cmds[10:13]
+    cmds[6:13] = -cmds[6:13]
 
     # cmds = cmds*((870-130)/2) + 500 # +-90
     cmds = cmds*((870-130)/3) + 500 # +-60  
@@ -49,8 +48,7 @@ def norm_act(cmds_):
 def act_cmds(cmds_):
     cmds = norm_act(cmds_)
     for i in range(12):
-        lx16_control.moveServo(i+10,cmds[i],rate=200)
-
+        lx16_control.moveServo(i+10,cmds[i],rate=150)
 def read_pos():
     pos = []
     for i in range(12):
@@ -60,7 +58,7 @@ def read_pos():
 if __name__ == '__main__':
     time_step = 0.11623673115395303
     para_config = np.loadtxt('para_config.csv')
-    log_path = 'log/log_2/'
+    log_path = 'log/log_4/'
     os.makedirs(log_path, exist_ok = True)
 
 
