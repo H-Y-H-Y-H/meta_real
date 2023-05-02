@@ -60,7 +60,7 @@ def read_pos():
 if __name__ == '__main__':
     time_step = 0.11623673115395303
     para_config = np.loadtxt('para_config.csv')
-    log_path = 'log/log_0'
+    log_path = 'log/log_2'
     os.makedirs(log_path, exist_ok = True)
 
 
