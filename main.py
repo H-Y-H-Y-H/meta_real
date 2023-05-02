@@ -38,7 +38,7 @@ def norm_act(cmds_):
     assert ( cmds <= 1. ).all() and ( cmds >= -1. ).all(),'ERROR: cmds wrong, should between -1 and 1'
 
 
-    cmds[7:9],cmds[10:13] = -cmds[7:9], -cmds[10:13]
+    # cmds[7:9],cmds[10:13] = -cmds[7:9], -cmds[10:13]
 
     # cmds = cmds*((870-130)/2) + 500 # +-90
     cmds = cmds*((870-130)/3) + 500 # +-60  
@@ -60,7 +60,7 @@ def read_pos():
 if __name__ == '__main__':
     time_step = 0.11623673115395303
     para_config = np.loadtxt('para_config.csv')
-    log_path = 'log/log_2'
+    log_path = 'log/log_2/'
     os.makedirs(log_path, exist_ok = True)
 
 
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     init_pos = read_pos()
 
     POLICY = 1
-    action_para_list = np.loadtxt('data/robot_sign_data_2/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6/action_para_list.csv')
+    action_para_list = np.loadtxt('data/robot_sign_data_10/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6/action_para_list.csv')
 
     step_num = 10
     query_state_after_N_step = 1

@@ -93,13 +93,20 @@ class meta_sm_Env(gym.Env):
         return self.obs
 
     def act(self, a):
-
-        for j in range(12):
-            pos_value = a[j]
-            p.setJointMotorControl2(self.robotid, self.joint_moving_idx[j], controlMode=self.mode,
-                                    targetPosition=pos_value,
-                                    force=self.force,
-                                    maxVelocity=self.maxVelocity)
+        if DEBUG_joint_direction:
+            for j in range(12):
+                pos_value = np.pi/3
+                p.setJointMotorControl2(self.robotid, self.joint_moving_idx[j], controlMode=self.mode,
+                                        targetPosition=pos_value,
+                                        force=self.force,
+                                        maxVelocity=self.maxVelocity)
+        else:
+            for j in range(12):
+                pos_value = a[j]
+                p.setJointMotorControl2(self.robotid, self.joint_moving_idx[j], controlMode=self.mode,
+                                        targetPosition=pos_value,
+                                        force=self.force,
+                                        maxVelocity=self.maxVelocity)
 
         for _ in range(self.n_sim_steps):
             p.stepSimulation()
@@ -219,6 +226,7 @@ if __name__ == "__main__":
 
     # Data collection
     mode = 0
+    DEBUG_joint_direction = True
 
     # [1, 2, 3, 4, 9, 11, 13, 14, 15, 16, 17, 22, 30, 31, 32, 34]
     if mode == 0:
@@ -246,7 +254,7 @@ if __name__ == "__main__":
             meta_env = meta_sm_Env(initial_joints_angle,
                                    urdf_path='V000_urdf/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6.urdf')
             max_train_step = 10
-            meta_env.sleep_time = 0
+            meta_env.sleep_time = 1/480
             obs = meta_env.reset()
             step_times = 0
             r_record = -np.inf
