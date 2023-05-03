@@ -48,7 +48,7 @@ def norm_act(cmds_):
 def act_cmds(cmds_):
     cmds = norm_act(cmds_)
     for i in range(12):
-        lx16_control.moveServo(i+10,cmds[i],rate=150)
+        lx16_control.moveServo(i+10,cmds[i],rate=100)
 def read_pos():
     pos = []
     for i in range(12):
@@ -58,7 +58,7 @@ def read_pos():
 if __name__ == '__main__':
     time_step = 0.11623673115395303
     para_config = np.loadtxt('para_config.csv')
-    log_path = 'log/log_4/'
+    log_path = 'log/log_7/'
     os.makedirs(log_path, exist_ok = True)
 
 
