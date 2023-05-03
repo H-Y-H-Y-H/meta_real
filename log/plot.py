@@ -17,26 +17,35 @@ def example_plot(ax, plot_title,real_data,sim_data, fontsize=12, hide_labels=Fal
 
 def compare_sim_real():
 
-    test_id = 0
+    test_id = 4
     # Sim data:
     data_pth = "../data/robot_sign_data_2/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6"
     sim_action_ns = np.load(data_pth +'/sans_10_0_V2.npy') # 12 a, 6 xyzrpy, 12 joints pos
     sim_joint_pos = sim_action_ns[:, :, 18:].reshape(-1,12).T
-    sim_state = sim_action_ns[:, :, 12:18].reshape(-1,6).T
+    sim_delta_state = sim_action_ns[:, :, 12:18].reshape(-1,6).T
     sim_action = sim_action_ns[:, :, :12].reshape(-1,12).T
 
-    sim_delta_state = sim_state[:,1:] - sim_state[:,:-1]
-
     # Real data:
-    joint_pos = np.loadtxt('log_%djoint_pos.csv' % test_id).T
-    action = np.loadtxt('log_%da.csv' % test_id).T
-    delta_state = np.loadtxt('log_%dstate.csv' % test_id).T
+    joint_pos = np.loadtxt('log_%d/joint_pos.csv' % test_id).T
+    action = np.loadtxt('log_%d/a.csv' % test_id).T
+    state = np.loadtxt('log_%d/state.csv' % test_id).T
+
 
     # motor pos to -1 and 1
     joint_pos =  (joint_pos - 500) / 370 * 1.57
+    joint_pos[6:] = -1*joint_pos[6:]
+    action[6:] = -1*action[6:]
 
     # real imu in degree --> radius
-    delta_state[3:] = delta_state[3:] / 180 * np.pi
+    state[3:] = state[3:] / 180 * np.pi
+
+    # real xyz rpy to delta
+    delta_state = state[:,1:] - state[:,:-1]
+    delta_state = np.hstack((state[:,:1],delta_state))
+
+    # reverse the direction
+    delta_state[3:] = -delta_state[3:]
+
 
     plot_list = ['a1','a2','a3','a4','a5','a6',
                  'a7','a8','a9','a10','a11','a12',
@@ -53,7 +62,7 @@ def compare_sim_real():
         if count <12:
             real_data = action[count]
             sim_data = sim_action[count]
-        elif count > 12 and count < 18:
+        elif count >= 12 and count < 18:
             real_data = delta_state[count-12]
             sim_data = sim_delta_state[count-12]
 

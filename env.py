@@ -93,9 +93,14 @@ class meta_sm_Env(gym.Env):
         return self.obs
 
     def act(self, a):
-        if DEBUG_joint_direction:
+        if dyna_force_joints:
             for j in range(12):
-                pos_value = np.pi/3
+                pos_value = a[j]
+                if j in [1,2,10,11]:
+                    self.maxVelocity = 0.9
+                else:
+                    self.maxVelocity = 0.8
+
                 p.setJointMotorControl2(self.robotid, self.joint_moving_idx[j], controlMode=self.mode,
                                         targetPosition=pos_value,
                                         force=self.force,
@@ -226,7 +231,7 @@ if __name__ == "__main__":
 
     # Data collection
     mode = 0
-    DEBUG_joint_direction = True
+    dyna_force_joints = True
 
     # [1, 2, 3, 4, 9, 11, 13, 14, 15, 16, 17, 22, 30, 31, 32, 34]
     if mode == 0:
@@ -254,7 +259,7 @@ if __name__ == "__main__":
             meta_env = meta_sm_Env(initial_joints_angle,
                                    urdf_path='V000_urdf/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6.urdf')
             max_train_step = 10
-            meta_env.sleep_time = 1/480
+            meta_env.sleep_time = 0
             obs = meta_env.reset()
             step_times = 0
             r_record = -np.inf
