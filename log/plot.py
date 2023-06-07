@@ -17,7 +17,7 @@ def example_plot(ax, plot_title,real_data,sim_data, fontsize=12, hide_labels=Fal
 
 def compare_sim_real():
 
-    test_id = 4
+    test_id = 7
     # Sim data:
     data_pth = "../data/robot_sign_data_2/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6"
     sim_action_ns = np.load(data_pth +'/sans_10_0_V2.npy') # 12 a, 6 xyzrpy, 12 joints pos

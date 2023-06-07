@@ -9,5 +9,8 @@ log4: use 150 rate for each joint instead of 200 in the previous.
 
 log5: use 150 rate no load 
 
-log6: use 100 rate 
+log6: use 150 rate load
+
+log7: use 100 rate 
+
 

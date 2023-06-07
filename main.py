@@ -37,7 +37,7 @@ def norm_act(cmds_):
     cmds = np.asarray(cmds_)
     assert ( cmds <= 1. ).all() and ( cmds >= -1. ).all(),'ERROR: cmds wrong, should between -1 and 1'
 
-    cmds[6:13] = -cmds[6:13]
+    cmds[6:13] = - cmds[6:13]
 
     # cmds = cmds*((870-130)/2) + 500 # +-90
     cmds = cmds*((870-130)/3) + 500 # +-60  

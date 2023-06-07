@@ -28,7 +28,7 @@ class meta_sm_Env(gym.Env):
         self.sleep_time = 0  # decrease the value if it is too slow.
 
         self.maxVelocity = 1.5  # lx-224 0.20 sec/60degree = 5.236 rad/s
-        self.force = 2.5
+        self.force = 1.8
 
         # self.max_velocity = 1.8
         # self.force = 1.6
@@ -96,10 +96,10 @@ class meta_sm_Env(gym.Env):
         if dyna_force_joints:
             for j in range(12):
                 pos_value = a[j]
-                if j in [1,2,10,11]:
-                    self.maxVelocity = 0.9
-                else:
-                    self.maxVelocity = 0.8
+                # if j in [1,2,10,11]:
+                #     self.maxVelocity = 0.9
+                # else:
+                #     self.maxVelocity = 0.8
 
                 p.setJointMotorControl2(self.robotid, self.joint_moving_idx[j], controlMode=self.mode,
                                         targetPosition=pos_value,
@@ -177,7 +177,7 @@ class meta_sm_Env(gym.Env):
         r = 0
         step_done = False
         # range 1 to step_num +1 so that the robot can achieve the original pos after current action.
-        for a_i in range(1,self.sub_step_num+1):
+        for a_i in range(1, self.sub_step_num+1):
             a_i_add = sin_move(a_i, sin_para)
             norm_a = self.initial_moving_joints_angle + a_i_add
             norm_a = np.clip(norm_a, -1, 1)
@@ -233,6 +233,8 @@ if __name__ == "__main__":
     mode = 0
     dyna_force_joints = True
 
+    # robot_name = '11_0_2_0_10_0_9_2_14_0_3_10_13_0_10_0'
+    robot_name = '10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6'
     # [1, 2, 3, 4, 9, 11, 13, 14, 15, 16, 17, 22, 30, 31, 32, 34]
     if mode == 0:
 
@@ -247,18 +249,17 @@ if __name__ == "__main__":
         initial_para = para_config[:, 0]
         para_range = para_config[:, 1:]
 
-        robot_name = '10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6'
-        log_pth = "data/robot_sign_data_2/%s/" % robot_name
+        log_pth = "data/robot_sign_data/%s/" % robot_name
         os.makedirs(log_pth, exist_ok=True)
 
-        initial_joints_angle = np.loadtxt('V000_urdf/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6.txt')
+        initial_joints_angle = np.loadtxt('robot_urdf/%s/%s.txt' % (robot_name,robot_name))
         initial_joints_angle = initial_joints_angle[0] if len(
             initial_joints_angle.shape) == 2 else initial_joints_angle
 
         if Train:
             meta_env = meta_sm_Env(initial_joints_angle,
-                                   urdf_path='V000_urdf/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6.urdf')
-            max_train_step = 10
+                                   urdf_path='robot_urdf/%s/%s.urdf'%(robot_name,robot_name))
+            max_train_step = 100
             meta_env.sleep_time = 0
             obs = meta_env.reset()
             step_times = 0
@@ -266,8 +267,9 @@ if __name__ == "__main__":
             ANS_data = []  # size = 12 + 6 + 12 initial np.hstack((initial_joints_angle, obs))
             save_action = []
             done_time = 0
-            done_time_killer = 1
-            num_population = 10
+            done_time_killer = 3
+            num_population = 5
+
             loop_action = np.copy(initial_para)
             mu = 0.8
             action_para_logger = []
@@ -282,12 +284,12 @@ if __name__ == "__main__":
                 action_list_append = norm_space * (para_range[:, 1] - para_range[:, 0]) + np.repeat([para_range[:, 0]],
                                                                                                     num_new_random_para,
                                                                                                     axis=0)
-                # All individuals actions
+                # All individual actions in one epoch
                 action_list = np.vstack((loop_action_array, action_list_append))
                 rewards = []
 
                 for i in range(num_population):
-                    step_times += 1
+                    step_times += num_population
                     action = action_list[i]
                     action_and_next_obs, r, done, _ = meta_env.step(action)
                     if step_times <= max_train_step:
