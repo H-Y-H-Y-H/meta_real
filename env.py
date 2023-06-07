@@ -234,7 +234,7 @@ if __name__ == "__main__":
     dyna_force_joints = True
 
     # robot_name = '11_0_2_0_10_0_9_2_14_0_3_10_13_0_10_0'
-    robot_name = '10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6'
+    robot_name = '10_5_9_10_16_0_10_4_18_0_2_8_14_7_3_2'
     # [1, 2, 3, 4, 9, 11, 13, 14, 15, 16, 17, 22, 30, 31, 32, 34]
     if mode == 0:
 
@@ -317,7 +317,7 @@ if __name__ == "__main__":
                     break
 
             print("step count:", step_times, "r:", r_record)
-            if save_flg and (done_time < done_time_killer):
+            if save_flg :#and (done_time < done_time_killer):
                 os.makedirs(log_pth, exist_ok=True)
                 np.savetxt(log_pth + "gait_step%d_%d.csv" % (max_train_step, add_sans), np.asarray(save_action))
                 ANS_data = np.asarray(ANS_data)
