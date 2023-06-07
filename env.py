@@ -289,11 +289,10 @@ if __name__ == "__main__":
                 rewards = []
 
                 for i in range(num_population):
-                    step_times += num_population
                     action = action_list[i]
                     action_and_next_obs, r, done, _ = meta_env.step(action)
-                    if step_times <= max_train_step:
-                        ANS_data.append(action_and_next_obs)
+
+                    ANS_data.append(action_and_next_obs)
                     obs = action_and_next_obs[-18:]
                     rewards.append(r)
 
@@ -312,6 +311,8 @@ if __name__ == "__main__":
                     loop_action = action_list[best_id]
                 # pos, ori = meta_env.robot_location()
 
+                step_times += num_population
+                print(step_times)
                 if step_times >= max_train_step:
                     break
 
