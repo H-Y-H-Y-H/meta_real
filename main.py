@@ -5,6 +5,10 @@ import os
 import pyrealsense2.pyrealsense2 as rs
 import math as m
 
+np.random.seed(2023)
+random.seed(2023)
+
+
 
 lx16_control = LX16A()
 # Declare RealSense pipeline, encapsulating the actual device and sensors
@@ -48,7 +52,7 @@ def norm_act(cmds_):
 def act_cmds(cmds_):
     cmds = norm_act(cmds_)
     for i in range(12):
-        lx16_control.moveServo(i+10,cmds[i],rate=100)
+        lx16_control.moveServo(i+10,cmds[i],rate=150)
 def read_pos():
     pos = []
     for i in range(12):
@@ -58,7 +62,7 @@ def read_pos():
 if __name__ == '__main__':
     time_step = 0.11623673115395303
     para_config = np.loadtxt('para_config.csv')
-    log_path = 'log/log_7/'
+    log_path = 'log/log_real_0/'
     os.makedirs(log_path, exist_ok = True)
 
 
@@ -72,7 +76,7 @@ if __name__ == '__main__':
     time.sleep(2)
     init_pos = read_pos()
 
-    POLICY = 1
+    POLICY = 0
     action_para_list = np.loadtxt('data/robot_sign_data_10/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6/action_para_list.csv')
 
     step_num = 10
@@ -81,10 +85,8 @@ if __name__ == '__main__':
     log_action = []
     log_state = []
 
-
     try:
         for step_i in range(step_num):
-
             if POLICY == 0:
                 norm_space = np.random.sample(len(initial_para))
                 a_para = norm_space * (para_range[:, 1] - para_range[:, 0]) + para_range[:, 0]
@@ -127,4 +129,3 @@ if __name__ == '__main__':
     np.savetxt(log_path+'state.csv',np.asarray(log_state))
 
 
-                
