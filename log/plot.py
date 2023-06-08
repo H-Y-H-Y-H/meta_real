@@ -67,8 +67,9 @@ def compare_sim_real():
     joint_pos1 = joint_pos.T.reshape(-1,16,12)
 
 
-
     csv_2_npy = np.dstack((action1, delta_state1,joint_pos1))
+
+
     np.save('log_real_%d/sans_%d_0_V2.npy'%(test_id,len(csv_2_npy)),csv_2_npy)
 
 
