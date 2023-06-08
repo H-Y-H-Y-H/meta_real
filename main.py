@@ -6,7 +6,7 @@ import pyrealsense2.pyrealsense2 as rs
 import math as m
 
 np.random.seed(2023)
-random.seed(2023)
+
 
 
 
@@ -52,7 +52,7 @@ def norm_act(cmds_):
 def act_cmds(cmds_):
     cmds = norm_act(cmds_)
     for i in range(12):
-        lx16_control.moveServo(i+10,cmds[i],rate=150)
+        lx16_control.moveServo(i+10,cmds[i],rate=100)
 def read_pos():
     pos = []
     for i in range(12):
@@ -62,7 +62,7 @@ def read_pos():
 if __name__ == '__main__':
     time_step = 0.11623673115395303
     para_config = np.loadtxt('para_config.csv')
-    log_path = 'log/log_real_0/'
+    log_path = 'log/log_real_1/'
     os.makedirs(log_path, exist_ok = True)
 
 
@@ -76,8 +76,8 @@ if __name__ == '__main__':
     time.sleep(2)
     init_pos = read_pos()
 
-    POLICY = 0
-    action_para_list = np.loadtxt('data/robot_sign_data_10/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6/action_para_list.csv')
+    POLICY = 1
+    action_para_list = np.loadtxt('data/robot_sign_data/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6/action_para_list.csv')
 
     step_num = 10
     query_state_after_N_step = 1
