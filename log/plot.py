@@ -17,10 +17,10 @@ def example_plot(ax, plot_title,real_data,sim_data, fontsize=12, hide_labels=Fal
 
 def compare_sim_real():
 
-    test_id = 2
+    test_id = 10
     # Sim data:
-    data_pth = "../data/robot_sign_data/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6"
-    sim_action_ns = np.load(data_pth +'/sans_30_0_V2.npy')[:10] # 12 a, 6 xyzrpy, 12 joints pos
+    data_pth = "../data/robot_sign_data/10_9_3_11_6_0_1_0_9_0_11_0_14_3_9_1"
+    sim_action_ns = np.load(data_pth +'/sans_100_0_V2.npy')[:10] # 12 a, 6 xyzrpy, 12 joints pos
     sim_joint_pos = sim_action_ns[:, :, 18:].reshape(-1,12).T
     sim_delta_state = sim_action_ns[:, :, 12:18].reshape(-1,6).T
     sim_action = sim_action_ns[:, :, :12].reshape(-1,12).T
