@@ -232,10 +232,14 @@ if __name__ == "__main__":
     # Data collection
     mode = 0
     dyna_force_joints = True
+    # 10_9_3_11
+    # 6_0_1_0
+    # 9_0_11_0
+    # 14_3_9_1
 
     # robot_name = '11_0_2_0_10_0_9_2_14_0_3_10_13_0_10_0'
-    # robot_name = '10_9_3_11_6_0_1_0_9_0_11_0_14_3_9_1'
-    robot_name = '10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6'
+    robot_name = '10_9_3_11_6_0_1_0_9_0_11_0_14_3_9_1'
+    # robot_name = '10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6'
     # [1, 2, 3, 4, 9, 11, 13, 14, 15, 16, 17, 22, 30, 31, 32, 34]
     if mode == 0:
 
@@ -260,7 +264,7 @@ if __name__ == "__main__":
         if Train:
             meta_env = meta_sm_Env(initial_joints_angle,
                                    urdf_path='robot_urdf/%s/%s.urdf'%(robot_name,robot_name))
-            max_train_step = 10
+            max_train_step = 100
             meta_env.sleep_time = 0
             obs = meta_env.reset()
             step_times = 0
