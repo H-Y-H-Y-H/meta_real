@@ -17,7 +17,7 @@ def example_plot(ax, plot_title,real_data,sim_data, fontsize=12, hide_labels=Fal
 
 def compare_sim_real():
 
-    test_id = 10
+    test_id = 11
     # Sim data:
     data_pth = "../data/robot_sign_data/10_9_3_11_6_0_1_0_9_0_11_0_14_3_9_1"
     sim_action_ns = np.load(data_pth +'/sans_100_0_V2.npy')[:10] # 12 a, 6 xyzrpy, 12 joints pos
@@ -51,14 +51,15 @@ def compare_sim_real():
     delta_state = np.hstack((state[:,:1],delta_state))
 
     # reverse the direction
-    delta_state[3:] = -delta_state[3:]
+    # delta_state[3:] = -delta_state[3:]
 
     # delta_state = np.clip(delta_state,-0.2,0.5)
 
-    reverse_list = [1,3,4,6,7]
+    reverse_list = [1,3,4,6,7,10]
     for i in reverse_list:
         joint_pos[i] *=-1
         action[i] *=-1
+
 
     action1 = action.T.reshape(-1,16,12)
     delta_state1 = delta_state.T.reshape(-1,16,6)
