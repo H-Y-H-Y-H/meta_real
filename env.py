@@ -260,7 +260,7 @@ if __name__ == "__main__":
         if Train:
             meta_env = meta_sm_Env(initial_joints_angle,
                                    urdf_path='robot_urdf/%s/%s.urdf'%(robot_name,robot_name))
-            max_train_step = 30
+            max_train_step = 10
             meta_env.sleep_time = 0
             obs = meta_env.reset()
             step_times = 0

@@ -17,19 +17,21 @@ def example_plot(ax, plot_title,real_data,sim_data, fontsize=12, hide_labels=Fal
 
 def compare_sim_real():
 
-    test_id = 7
+    test_id = 0
     # Sim data:
-    data_pth = "../data/robot_sign_data_2/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6"
-    sim_action_ns = np.load(data_pth +'/sans_10_0_V2.npy') # 12 a, 6 xyzrpy, 12 joints pos
+    data_pth = "../data/robot_sign_data/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6"
+    sim_action_ns = np.load(data_pth +'/sans_30_0_V2.npy')[:10] # 12 a, 6 xyzrpy, 12 joints pos
     sim_joint_pos = sim_action_ns[:, :, 18:].reshape(-1,12).T
     sim_delta_state = sim_action_ns[:, :, 12:18].reshape(-1,6).T
     sim_action = sim_action_ns[:, :, :12].reshape(-1,12).T
 
     # Real data:
-    joint_pos = np.loadtxt('log_%d/joint_pos.csv' % test_id).T
-    action = np.loadtxt('log_%d/a.csv' % test_id).T
-    state = np.loadtxt('log_%d/state.csv' % test_id).T
+    joint_pos = np.loadtxt('log_real_%d/joint_pos.csv' % test_id).T
+    action =    np.loadtxt('log_real_%d/a.csv' % test_id).T
+    state =     np.loadtxt('log_real_%d/state.csv' % test_id).T
 
+    csv_2_npy = np.dstack((action.reshape(-1,16,12),state.reshape(-1,16,6),joint_pos.reshape(-1,16,12)))
+    np.save('log_real_%d/sans_%d_0_V2.npy'%(test_id,len(csv_2_npy)),csv_2_npy)
 
     # motor pos to -1 and 1
     joint_pos =  (joint_pos - 500) / 370 * 1.57
