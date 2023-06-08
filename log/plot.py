@@ -25,28 +25,38 @@ def compare_sim_real():
     sim_delta_state = sim_action_ns[:, :, 12:18].reshape(-1,6).T
     sim_action = sim_action_ns[:, :, :12].reshape(-1,12).T
 
-    # Real data:
+    # # Real data:
     joint_pos = np.loadtxt('log_real_%d/joint_pos.csv' % test_id).T
     action =    np.loadtxt('log_real_%d/a.csv' % test_id).T
     state =     np.loadtxt('log_real_%d/state.csv' % test_id).T
 
-    csv_2_npy = np.dstack((action.reshape(-1,16,12),state.reshape(-1,16,6),joint_pos.reshape(-1,16,12)))
-    np.save('log_real_%d/sans_%d_0_V2.npy'%(test_id,len(csv_2_npy)),csv_2_npy)
+    action_ns = np.load('log_real_%d/sans_10_0_V2.npy'%test_id)[:10] # 12 a, 6 xyzrpy, 12 joints pos
+    joint_pos = action_ns[:, :, 18:].reshape(-1,12).T
+    delta_state = action_ns[:, :, 12:18].reshape(-1,6).T
+    action = action_ns[:, :, :12].reshape(-1,12).T
 
-    # motor pos to -1 and 1
-    joint_pos =  (joint_pos - 500) / 370 * 1.57
-    joint_pos[6:] = -1*joint_pos[6:]
-    action[6:] = -1*action[6:]
 
-    # real imu in degree --> radius
-    state[3:] = state[3:] / 180 * np.pi
+    # # # motor pos to -1 and 1
+    # joint_pos =  (joint_pos - 500) / 370 * 1.57
+    # joint_pos[6:] = -1*joint_pos[6:]
+    # action[6:] = -1*action[6:]
+    #
+    # # real imu in degree --> radius
+    # state[3:] = state[3:] / 180 * np.pi
+    #
+    # # real xyz rpy to delta
+    # delta_state = state[:,1:] - state[:,:-1]
+    # delta_state = np.hstack((state[:,:1],delta_state))
+    #
+    # # reverse the direction
+    # delta_state[3:] = -delta_state[3:]
+    #
+    # action1 = action.T.reshape(-1,16,12)
+    # delta_state1 = delta_state.T.reshape(-1,16,6)
+    # joint_pos1 = joint_pos.T.reshape(-1,16,12)
+    # csv_2_npy = np.dstack((action1, delta_state1,joint_pos1))
+    # np.save('log_real_%d/sans_%d_0_V2.npy'%(test_id,len(csv_2_npy)),csv_2_npy)
 
-    # real xyz rpy to delta
-    delta_state = state[:,1:] - state[:,:-1]
-    delta_state = np.hstack((state[:,:1],delta_state))
-
-    # reverse the direction
-    delta_state[3:] = -delta_state[3:]
 
 
     plot_list = ['a1','a2','a3','a4','a5','a6',
