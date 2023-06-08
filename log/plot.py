@@ -11,17 +11,18 @@ def example_plot(ax, plot_title,real_data,sim_data, fontsize=12, hide_labels=Fal
         ax.set_xticklabels([])
         ax.set_yticklabels([])
     else:
-        ax.set_xlabel('step', fontsize=fontsize)
-        ax.set_ylabel('y-label', fontsize=fontsize)
+        ax.set_xlabel('Time', fontsize=fontsize)
+        # ax.set_ylabel('value', fontsize=fontsize)
         ax.set_title(plot_title, fontsize=fontsize)
 
 def compare_sim_real():
 
     test_id = 1
     # Sim data:
-
     data_pth = "../data/robot_sign_data/10_9_9_6_11_9_9_6_13_3_3_6_14_3_3_6/"
-    sim_action_ns = np.load(data_pth +'/sans_100_0_V2.npy')[:10] # 12 a, 6 xyzrpy, 12 joints pos
+
+    # data_pth = "../data/robot_sign_data/10_9_3_11_6_0_1_0_9_0_11_0_14_3_9_1/"
+    sim_action_ns = np.load(data_pth +'/sans_100s_0_V2.npy')[:10] # 12 a, 6 xyzrpy, 12 joints pos
     sim_joint_pos = sim_action_ns[:, :, 18:].reshape(-1,12).T
     sim_delta_state = sim_action_ns[:, :, 12:18].reshape(-1,6).T
     sim_action = sim_action_ns[:, :, :12].reshape(-1,12).T
@@ -33,44 +34,44 @@ def compare_sim_real():
 
 
 
-    # action_ns = np.load('log_real_%d/sans_10_0_V2.npy'%test_id)[:10] # 12 a, 6 xyzrpy, 12 joints pos
-    # joint_pos = action_ns[:, :, 18:].reshape(-1,12).T
-    # delta_state = action_ns[:, :, 12:18].reshape(-1,6).T
-    # action = action_ns[:, :, :12].reshape(-1,12).T
+    action_ns = np.load('log_real_%d/sans_10_0_V2.npy'%test_id)[:10] # 12 a, 6 xyzrpy, 12 joints pos
+    joint_pos = action_ns[:, :, 18:].reshape(-1,12).T
+    delta_state = action_ns[:, :, 12:18].reshape(-1,6).T
+    action = action_ns[:, :, :12].reshape(-1,12).T
 
 
-    # # motor pos to -1 and 1
-    joint_pos =  (joint_pos - 500) / 370 * 1.57
-    joint_pos[6:] = -1*joint_pos[6:]
-    action[6:] = -1*action[6:]
-
-    # real imu in degree --> radius
-    state[3:] = state[3:] / 180 * np.pi
-
-    # real xyz rpy to delta
-    delta_state = state[:,1:] - state[:,:-1]
-    delta_state = np.hstack((state[:,:1],delta_state))
-
-    # reverse the direction
-    delta_state[3:] = -delta_state[3:]
-
-    delta_state = np.clip(delta_state,-0.2,0.5)
-
-    # reverse_list = [1,3,4,6,7,10]
-    # for i in reverse_list:
-    #     joint_pos[i] *=-1
-    #     action[i] *=-1
-
-
-    action1 = action.T.reshape(-1,16,12)
-    delta_state1 = delta_state.T.reshape(-1,16,6)
-    joint_pos1 = joint_pos.T.reshape(-1,16,12)
-
-
-    csv_2_npy = np.dstack((action1, delta_state1,joint_pos1))
+    # # # motor pos to -1 and 1
+    # joint_pos =  (joint_pos - 500) / 370 * 1.57
+    # joint_pos[6:] = -1*joint_pos[6:]
+    # action[6:] = -1*action[6:]
+    #
+    # # real imu in degree --> radius
+    # state[3:] = state[3:] / 180 * np.pi
+    #
+    # # real xyz rpy to delta
+    # delta_state = state[:,1:] - state[:,:-1]
+    # delta_state = np.hstack((state[:,:1],delta_state))
+    #
+    # # reverse the direction
+    # delta_state[3:] = -delta_state[3:]
+    #
+    # delta_state = np.clip(delta_state,-0.2,0.5)
+    #
+    # # reverse_list = [1,3,4,6,7,10]
+    # # for i in reverse_list:
+    # #     joint_pos[i] *=-1
+    # #     action[i] *=-1
+    #
+    #
+    # action1 = action.T.reshape(-1,16,12)
+    # delta_state1 = delta_state.T.reshape(-1,16,6)
+    # joint_pos1 = joint_pos.T.reshape(-1,16,12)
 
 
-    np.save('log_real_%d/sans_%d_0_V2.npy'%(test_id,len(csv_2_npy)),csv_2_npy)
+    # csv_2_npy = np.dstack((action1, delta_state1,joint_pos1))
+
+
+    # np.save('log_real_%d/sans_%d_0_V2.npy'%(test_id,len(csv_2_npy)),csv_2_npy)
 
 
 
