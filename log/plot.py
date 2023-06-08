@@ -30,6 +30,8 @@ def compare_sim_real():
     action =    np.loadtxt('log_real_%d/a.csv' % test_id).T
     state =     np.loadtxt('log_real_%d/state.csv' % test_id).T
 
+
+
     # action_ns = np.load('log_real_%d/sans_10_0_V2.npy'%test_id)[:10] # 12 a, 6 xyzrpy, 12 joints pos
     # joint_pos = action_ns[:, :, 18:].reshape(-1,12).T
     # delta_state = action_ns[:, :, 12:18].reshape(-1,6).T
@@ -50,11 +52,20 @@ def compare_sim_real():
 
     # reverse the direction
     delta_state[3:] = -delta_state[3:]
-    delta_state = np.clip(delta_state,-0.2,0.5)
+
+    # delta_state = np.clip(delta_state,-0.2,0.5)
+
+    reverse_list = [1,3,4,6,7]
+    for i in reverse_list:
+        joint_pos[i] *=-1
+        action[i] *=-1
 
     action1 = action.T.reshape(-1,16,12)
     delta_state1 = delta_state.T.reshape(-1,16,6)
     joint_pos1 = joint_pos.T.reshape(-1,16,12)
+
+
+
     csv_2_npy = np.dstack((action1, delta_state1,joint_pos1))
     np.save('log_real_%d/sans_%d_0_V2.npy'%(test_id,len(csv_2_npy)),csv_2_npy)
 
