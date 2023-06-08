@@ -44,11 +44,11 @@ def norm_act(cmds_):
 
     cmds[6:13] = - cmds[6:13]
 
-    cmds[1] *= -1
-    cmds[3:5] *= -1
+    # cmds[1] *= -1
+    # cmds[3:5] *= -1
 
-    cmds[6:8] *=-1
-    cmds[10] *=-1
+    # cmds[6:8] *=-1
+    # cmds[10] *=-1
 
 
     # cmds = cmds*((870-130)/2) + 500 # +-90
@@ -84,11 +84,11 @@ if __name__ == '__main__':
     init_q = init_q[0] if len(init_q.shape) == 2 else init_q
     joint_moving_idx = [1, 2, 3, 6, 7, 8, 11, 12, 13, 16, 17, 18]
     initial_moving_joints_angle = np.asarray([3 / np.pi * init_q[idx] for idx in joint_moving_idx])
-    # initial_moving_joints_angle[1] *= -1
-    # initial_moving_joints_angle[3:5] *= -1
+    initial_moving_joints_angle[1] *= -1
+    initial_moving_joints_angle[3:5] *= -1
 
-    # initial_moving_joints_angle[6:8] *=-1
-    # initial_moving_joints_angle[10] *=-1
+    initial_moving_joints_angle[6:8] *=-1
+    initial_moving_joints_angle[10] *=-1
 
     # cmds[1],cmds[4],cmds[7],cmds[10] = [-1]*4
     # cmds[2],cmds[5],cmds[8],cmds[11] = [-1]*4
